@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iimjobs Experiment Hub</title>
+    <title>IIMJobs Analytics – Experiment Hub</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700;9..144,800&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Sidebar -->
@@ -20,15 +19,12 @@
             </div>
             <div class="logo-text">
                 <span class="logo-title">Experiment Hub</span>
-                <span class="logo-sub">iimjobs Analytics</span>
+                <span class="logo-sub">IIMJobs Analytics</span>
             </div>
         </div>
         <nav class="sidebar-nav">
-            <a href="#methodology" class="nav-item active" data-section="methodology">
-                <span class="nav-icon">📋</span>Methodology
-            </a>
-            <a href="#checklist" class="nav-item" data-section="checklist">
-                <span class="nav-icon">✅</span>Pre-Launch Checklist
+            <a href="#framework" class="nav-item active" data-section="framework">
+                <span class="nav-icon">📋</span>Framework
             </a>
             <a href="#sample-size" class="nav-item" data-section="sample-size">
                 <span class="nav-icon">📊</span>Sample Size Calculator
@@ -39,23 +35,8 @@
             <a href="#lift" class="nav-item" data-section="lift">
                 <span class="nav-icon">📈</span>Lift Calculator
             </a>
-            <a href="#sql" class="nav-item" data-section="sql">
-                <span class="nav-icon">🗄️</span>SQL Templates
-            </a>
-            <a href="#dashboard" class="nav-item" data-section="dashboard">
-                <span class="nav-icon">📉</span>Monitoring Dashboard
-            </a>
-            <a href="#registry" class="nav-item" data-section="registry">
-                <span class="nav-icon">📝</span>Experiment Registry
-            </a>
-            <a href="#guardrails" class="nav-item" data-section="guardrails">
-                <span class="nav-icon">🛡️</span>Guardrail Framework
-            </a>
-            <a href="#mistakes" class="nav-item" data-section="mistakes">
-                <span class="nav-icon">⚠️</span>Common Mistakes
-            </a>
-            <a href="#bi-tools" class="nav-item" data-section="bi-tools">
-                <span class="nav-icon">🔧</span>BI Agent Tools
+            <a href="#terms" class="nav-item" data-section="terms">
+                <span class="nav-icon">📖</span>Understand the Terms
             </a>
         </nav>
         <div class="sidebar-footer">
@@ -79,795 +60,446 @@
     <!-- Main Content -->
     <main class="main-content" id="mainContent">
 
-        <!-- 1. METHODOLOGY -->
-        <section class="content-section active" id="methodology">
+        <!-- ================================================
+             PAGE 1: FRAMEWORK
+             ================================================ -->
+        <section class="content-section active" id="framework">
             <div class="section-header">
-                <h1>Experiment Methodology</h1>
-                <p class="section-desc">End-to-end A/B testing framework for iimjobs analytics team. Every experiment follows this standardized lifecycle.</p>
+                <h1>Analytics Experiment Framework</h1>
+                <p class="section-desc">This framework is owned and operated by the Analytics Team. It provides a simple, repeatable process for running reliable experiments.</p>
             </div>
-            <div class="table-wrapper">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Step</th>
-                            <th>Phase</th>
-                            <th>Analytics Owner Responsibility</th>
-                            <th>Deliverable</th>
-                            <th>Validation Checks</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="step-badge">1</span></td>
-                            <td>Hypothesis Formation</td>
-                            <td>Review product hypothesis, define primary & guardrail metrics, validate metric sensitivity</td>
-                            <td>Experiment Design Doc</td>
-                            <td>Metric definition review, historical variance analysis</td>
-                        </tr>
-                        <tr>
-                            <td><span class="step-badge">2</span></td>
-                            <td>Power Analysis</td>
-                            <td>Compute required sample size, estimate experiment duration, assess traffic feasibility</td>
-                            <td>Sample Size Report</td>
-                            <td>MDE vs business impact alignment, traffic split validation</td>
-                        </tr>
-                        <tr>
-                            <td><span class="step-badge">3</span></td>
-                            <td>Randomization Setup</td>
-                            <td>Define randomization unit (user/session), configure assignment logic, verify split ratio</td>
-                            <td>Assignment Table + QA Log</td>
-                            <td><span class="tag tag-blue">Balance Test</span> on pre-treatment covariates</td>
-                        </tr>
-                        <tr>
-                            <td><span class="step-badge">4</span></td>
-                            <td>Pre-Launch QA</td>
-                            <td>Run A/A test or burn-in period, validate event logging, confirm metric pipelines</td>
-                            <td>QA Sign-off</td>
-                            <td><span class="tag tag-purple">SRM Check</span> on A/A data, event logging audit</td>
-                        </tr>
-                        <tr>
-                            <td><span class="step-badge">5</span></td>
-                            <td>Experiment Live</td>
-                            <td>Daily monitoring of SRM, guardrails, and data quality; flag anomalies</td>
-                            <td>Daily Monitoring Report</td>
-                            <td><span class="tag tag-purple">SRM Check</span> daily, <span class="tag tag-red">Guardrail Alerts</span></td>
-                        </tr>
-                        <tr>
-                            <td><span class="step-badge">6</span></td>
-                            <td>Analysis</td>
-                            <td>Run <span class="tag tag-green">ITT Analysis</span>, compute lift & CI, check heterogeneous effects</td>
-                            <td>Experiment Results Report</td>
-                            <td>ITT analysis, sensitivity checks, multiple comparison correction</td>
-                        </tr>
-                        <tr>
-                            <td><span class="step-badge">7</span></td>
-                            <td>Business Projection</td>
-                            <td>Translate statistical lift to business impact (revenue, applications, engagement)</td>
-                            <td>Business Impact Memo</td>
-                            <td><span class="tag tag-orange">Business Projection</span> reviewed by leadership</td>
-                        </tr>
-                        <tr>
-                            <td><span class="step-badge">8</span></td>
-                            <td>Decision & Documentation</td>
-                            <td>Present results, recommend ship/iterate/kill, document learnings in registry</td>
-                            <td>Decision Record</td>
-                            <td>Peer review, registry update, post-mortem if needed</td>
-                        </tr>
-                    </tbody>
-                </table>
+
+            <!-- 5-Step Flow -->
+            <div class="stepper">
+                <div class="step">
+                    <div class="step-badge">1</div>
+                    <div class="step-content">
+                        <div class="step-name">Define</div>
+                        <div class="step-desc">Define Primary Metric and Outcome Metric</div>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-badge">2</div>
+                    <div class="step-content">
+                        <div class="step-name">Plan</div>
+                        <div class="step-desc">Calculate required sample size and duration</div>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-badge">3</div>
+                    <div class="step-content">
+                        <div class="step-name">Split</div>
+                        <div class="step-desc">Validate traffic split (SRM Check)</div>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-badge">4</div>
+                    <div class="step-content">
+                        <div class="step-name">Run</div>
+                        <div class="step-desc">Let experiment collect data</div>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-badge">5</div>
+                    <div class="step-content">
+                        <div class="step-name">Analyze &amp; Decide</div>
+                        <div class="step-desc">Measure lift and evaluate business impact</div>
+                    </div>
+                </div>
             </div>
-            <div class="info-cards-row">
-                <div class="info-card">
-                    <h3>SRM — Sample Ratio Mismatch</h3>
-                    <p>Verifies that the observed traffic split matches the expected split. A significant SRM indicates a randomization bug that invalidates the entire experiment. Always check before analysis.</p>
+
+            <!-- Metric Definitions -->
+            <div class="metrics-row">
+                <div class="metric-card metric-primary">
+                    <div class="metric-badge">Primary Metric</div>
+                    <p class="metric-explain">The direct improvement we expect from the experiment.</p>
+                    <div class="metric-tags">
+                        <span class="tag tag-blue">Apply Rate</span>
+                        <span class="tag tag-blue">Click Through Rate</span>
+                        <span class="tag tag-blue">Profile Completion Rate</span>
+                    </div>
                 </div>
-                <div class="info-card">
-                    <h3>ITT — Intent-to-Treat</h3>
-                    <p>Analyzes all users assigned to a variant regardless of whether they actually experienced the treatment. This preserves the integrity of randomization and avoids selection bias.</p>
+                <div class="metric-card metric-outcome">
+                    <div class="metric-badge outcome">Outcome Metric</div>
+                    <p class="metric-explain">The broader business impact we care about.</p>
+                    <div class="metric-tags">
+                        <span class="tag tag-green">Total Applications</span>
+                        <span class="tag tag-green">Revenue</span>
+                        <span class="tag tag-green">Engagement</span>
+                        <span class="tag tag-green">Recruiter Retention</span>
+                    </div>
                 </div>
-                <div class="info-card">
-                    <h3>Balance Test</h3>
-                    <p>Compares pre-treatment covariates (tenure, platform, geography) across variants to confirm that randomization produced comparable groups. Imbalance suggests a flawed assignment mechanism.</p>
-                </div>
+            </div>
+
+            <!-- Before Launch Checklist -->
+            <div class="card">
+                <h2 class="card-title">✅ Before Going Live</h2>
+                <ul class="checklist-simple">
+                    <li>
+                        <label class="check-label"><input type="checkbox"><span class="checkmark"></span>Is traffic split correct?</label>
+                    </li>
+                    <li>
+                        <label class="check-label"><input type="checkbox"><span class="checkmark"></span>Is primary metric tracking correctly?</label>
+                    </li>
+                    <li>
+                        <label class="check-label"><input type="checkbox"><span class="checkmark"></span>Is event logging working?</label>
+                    </li>
+                </ul>
             </div>
         </section>
 
-        <!-- 2. PRE-LAUNCH CHECKLIST -->
-        <section class="content-section" id="checklist">
-            <div class="section-header">
-                <h1>Pre-Launch Checklist</h1>
-                <p class="section-desc">Complete every item before launching an experiment. No exceptions.</p>
-            </div>
-            <div class="checklist-container">
-                <div class="checklist-group">
-                    <h3>📐 Design & Planning</h3>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>Hypothesis documented with expected direction</label>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>Primary metric defined and agreed upon</label>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>Guardrail metrics identified (revenue, latency, errors)</label>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>MDE aligned with business-meaningful impact</label>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>Sample size calculated and duration estimated</label>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>Randomization unit defined (user-level preferred)</label>
-                </div>
-                <div class="checklist-group">
-                    <h3>⚙️ Technical Setup</h3>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>Assignment table created and logging verified</label>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>Event tracking confirmed for all required metrics</label>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>No crossover between variants possible</label>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>Feature flag configured correctly</label>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>Rollback plan documented</label>
-                </div>
-                <div class="checklist-group">
-                    <h3>🔬 Validation</h3>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>A/A test or burn-in period completed</label>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>SRM check passed on initial traffic</label>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>Balance test on pre-treatment covariates passed</label>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>Data pipeline validated end-to-end</label>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>Stakeholder sign-off obtained</label>
-                </div>
-                <div class="checklist-group">
-                    <h3>📢 Communication</h3>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>Experiment registered in Experiment Registry</label>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>Team notified via Slack / email</label>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>Monitoring schedule agreed upon</label>
-                    <label class="checklist-item"><input type="checkbox"><span class="checkmark"></span>Escalation path for guardrail breaches defined</label>
-                </div>
-            </div>
-            <div class="checklist-progress">
-                <div class="progress-bar"><div class="progress-fill" id="checklistProgress"></div></div>
-                <span class="progress-text" id="checklistText">0 / 17 completed</span>
-            </div>
-        </section>
-
-        <!-- 3. SAMPLE SIZE CALCULATOR -->
+        <!-- ================================================
+             PAGE 2: SAMPLE SIZE CALCULATOR
+             ================================================ -->
         <section class="content-section" id="sample-size">
             <div class="section-header">
                 <h1>Sample Size Calculator</h1>
-                <p class="section-desc">Two-proportion z-test power analysis. Computes required sample size per variant for your experiment.</p>
+                <p class="section-desc">Determine how many users you need and how long your experiment should run.</p>
             </div>
-            <div class="calculator-grid">
-                <div class="calc-inputs">
-                    <div class="input-group">
-                        <label>Baseline Conversion Rate (%)
-                            <span class="tooltip" data-tip="Current conversion rate of the control experience. E.g., if 5% of users apply to a job, enter 5.">ⓘ</span>
-                        </label>
-                        <input type="number" id="ssBaseline" value="5" min="0.01" max="100" step="0.1">
+
+            <div class="card">
+                <h2 class="card-title">How many groups are you comparing?</h2>
+                <div class="radio-group" id="ssGroupSelect">
+                    <label class="radio-card selected" onclick="selectSSGroup(2)">
+                        <input type="radio" name="ss-groups" value="2" checked>
+                        <div class="radio-title">2 Groups</div>
+                        <div class="radio-desc">Control vs Treatment</div>
+                    </label>
+                    <label class="radio-card" onclick="selectSSGroup(3)">
+                        <input type="radio" name="ss-groups" value="3">
+                        <div class="radio-title">3 Groups</div>
+                        <div class="radio-desc">Control vs T1 vs T2</div>
+                    </label>
+                </div>
+
+                <!-- 2-Group Inputs -->
+                <div id="ss2group">
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Baseline Conversion Rate (%) <span class="tooltip" data-tip="Current conversion rate before the experiment starts.">ⓘ</span></label>
+                            <input type="number" id="ssBaseline" placeholder="e.g. 5" min="0.01" max="100" step="0.01">
+                            <span class="error-msg" id="err-ssBaseline">Please enter a valid rate (0.01–100).</span>
+                        </div>
+                        <div class="input-group">
+                            <label>Expected Treatment Rate (%) <span class="tooltip" data-tip="The conversion rate you expect from the treatment group.">ⓘ</span></label>
+                            <input type="number" id="ssTreatment" placeholder="e.g. 6" min="0.01" max="100" step="0.01">
+                            <span class="error-msg" id="err-ssTreatment">Please enter a valid rate (0.01–100).</span>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label>Minimum Detectable Effect (%)
-                            <span class="tooltip" data-tip="Smallest relative change you want to detect. E.g., 10 means a 10% relative lift (5% → 5.5%).">ⓘ</span>
-                        </label>
-                        <input type="number" id="ssMDE" value="10" min="0.1" max="100" step="0.1">
+                </div>
+
+                <!-- 3-Group Inputs -->
+                <div id="ss3group" class="hidden">
+                    <div class="input-row input-row-3">
+                        <div class="input-group">
+                            <label>Control Rate (%)</label>
+                            <input type="number" id="ssCtrl3" placeholder="e.g. 5" min="0.01" max="100" step="0.01">
+                            <span class="error-msg" id="err-ssCtrl3">Required.</span>
+                        </div>
+                        <div class="input-group">
+                            <label>T1 Rate (%)</label>
+                            <input type="number" id="ssT1" placeholder="e.g. 6" min="0.01" max="100" step="0.01">
+                            <span class="error-msg" id="err-ssT1">Required.</span>
+                        </div>
+                        <div class="input-group">
+                            <label>T2 Rate (%)</label>
+                            <input type="number" id="ssT2" placeholder="e.g. 6.5" min="0.01" max="100" step="0.01">
+                            <span class="error-msg" id="err-ssT2">Required.</span>
+                        </div>
                     </div>
+                </div>
+
+                <!-- Common Inputs -->
+                <div class="input-row">
                     <div class="input-group">
-                        <label>Confidence Level (%)
-                            <span class="tooltip" data-tip="Probability of not making a Type I error (false positive). 95% is standard.">ⓘ</span>
-                        </label>
+                        <label>Confidence Level (%) <span class="tooltip" data-tip="How sure you want to be. 95% is standard.">ⓘ</span></label>
                         <input type="number" id="ssConfidence" value="95" min="80" max="99.9" step="0.1">
                     </div>
                     <div class="input-group">
-                        <label>Statistical Power (%)
-                            <span class="tooltip" data-tip="Probability of detecting a true effect. 80% is standard. Higher power = larger sample.">ⓘ</span>
-                        </label>
-                        <input type="number" id="ssPower" value="80" min="50" max="99" step="1">
+                        <label>Statistical Power (%) <span class="tooltip" data-tip="Probability of detecting a real effect. 80% is standard.">ⓘ</span></label>
+                        <input type="number" id="ssPower" value="80" min="50" max="99.9" step="0.1">
                     </div>
-                    <div class="input-group">
-                        <label>Daily Traffic (users per variant)
-                            <span class="tooltip" data-tip="Estimated number of users entering each variant per day. Used to calculate experiment duration.">ⓘ</span>
-                        </label>
-                        <input type="number" id="ssDailyTraffic" value="5000" min="1" step="100">
-                    </div>
-                    <button class="btn-primary" onclick="calculateSampleSize()">Calculate Sample Size</button>
                 </div>
-                <div class="calc-results" id="ssResults">
-                    <div class="result-card">
-                        <span class="result-label">Sample Size Per Variant</span>
-                        <span class="result-value" id="ssResultN">—</span>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Daily Traffic Per Group <span class="tooltip" data-tip="Number of users each group receives per day.">ⓘ</span></label>
+                        <input type="number" id="ssDailyTraffic" placeholder="e.g. 1000" min="1" step="1">
+                        <span class="error-msg" id="err-ssDailyTraffic">Please enter a valid number.</span>
                     </div>
-                    <div class="result-card">
-                        <span class="result-label">Total Sample Size</span>
-                        <span class="result-value" id="ssResultTotal">—</span>
+                    <div class="input-group"></div>
+                </div>
+
+                <button class="btn-primary" onclick="calculateSampleSize()">Calculate Sample Size</button>
+
+                <div id="ssResults" class="hidden">
+                    <div class="result-grid">
+                        <div class="result-card">
+                            <div class="result-value" id="ssResPerGroup">–</div>
+                            <div class="result-label">Users Per Group</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-value" id="ssResTotal">–</div>
+                            <div class="result-label">Total Users Needed</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-value" id="ssResDays">–</div>
+                            <div class="result-label">Estimated Duration</div>
+                        </div>
                     </div>
-                    <div class="result-card">
-                        <span class="result-label">Estimated Duration</span>
-                        <span class="result-value" id="ssResultDuration">—</span>
-                    </div>
-                    <div class="result-card">
-                        <span class="result-label">Treatment Rate</span>
-                        <span class="result-value" id="ssResultTreatment">—</span>
-                    </div>
-                    <div class="result-detail" id="ssFormula" style="display:none;">
-                        <h4>Formula Used</h4>
-                        <code>n = (Z_α/2 + Z_β)² × [p₁(1−p₁) + p₂(1−p₂)] / (p₂ − p₁)²</code>
-                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">What do these terms mean?</h2>
+                <div class="term-explain">
+                    <p><strong>Baseline Conversion</strong> — Current performance before the experiment.</p>
+                    <p><strong>Confidence Level</strong> — How sure we want to be that the result is real (usually 95%).</p>
+                    <p><strong>Power</strong> — The chance of detecting a real improvement if one exists (usually 80%).</p>
+                </div>
+                <button class="advanced-toggle" onclick="toggleAdvanced(this)">
+                    <span class="adv-icon">+</span> Advanced Explanation
+                </button>
+                <div class="advanced-content">
+                    The sample size is calculated using the formula for comparing two proportions. It uses the Z-scores for the desired confidence level (α) and power (1−β), along with the pooled variance of the two conversion rates. For 3 groups, the Bonferroni correction is applied — α is divided by the number of pairwise comparisons — to control for multiple testing, and the largest required sample across all pairs is used.
                 </div>
             </div>
         </section>
 
-        <!-- 4. SRM CHECKER -->
+        <!-- ================================================
+             PAGE 3: SRM CHECKER
+             ================================================ -->
         <section class="content-section" id="srm">
             <div class="section-header">
                 <h1>SRM Checker</h1>
-                <p class="section-desc">Sample Ratio Mismatch detection using Chi-square goodness-of-fit test. Run this daily during experiments.</p>
+                <p class="section-desc">Verify that your experiment's traffic split is correct before trusting the results.</p>
             </div>
-            <div class="calculator-grid">
-                <div class="calc-inputs">
-                    <div class="input-group">
-                        <label>Control Traffic Count
-                            <span class="tooltip" data-tip="Number of users assigned to the control group.">ⓘ</span>
-                        </label>
-                        <input type="number" id="srmControl" value="50200" min="1">
-                    </div>
-                    <div class="input-group">
-                        <label>Treatment Traffic Count
-                            <span class="tooltip" data-tip="Number of users assigned to the treatment group.">ⓘ</span>
-                        </label>
-                        <input type="number" id="srmTreatment" value="49300" min="1">
-                    </div>
-                    <div class="input-group">
-                        <label>Expected Split (Control %)
-                            <span class="tooltip" data-tip="Expected percentage of traffic going to control. For a 50/50 split, enter 50.">ⓘ</span>
-                        </label>
-                        <input type="number" id="srmExpected" value="50" min="1" max="99" step="1">
-                    </div>
-                    <button class="btn-primary" onclick="checkSRM()">Check SRM</button>
+
+            <div class="card">
+                <h2 class="card-title">How many variants?</h2>
+                <div class="radio-group" id="srmGroupSelect">
+                    <label class="radio-card selected" onclick="selectSRMGroup(2)">
+                        <input type="radio" name="srm-groups" value="2" checked>
+                        <div class="radio-title">2 Groups</div>
+                        <div class="radio-desc">Control vs Treatment</div>
+                    </label>
+                    <label class="radio-card" onclick="selectSRMGroup(3)">
+                        <input type="radio" name="srm-groups" value="3">
+                        <div class="radio-title">3 Groups</div>
+                        <div class="radio-desc">Control vs T1 vs T2</div>
+                    </label>
                 </div>
-                <div class="calc-results" id="srmResults">
-                    <div class="result-card">
-                        <span class="result-label">Chi-Square Statistic</span>
-                        <span class="result-value" id="srmChi">—</span>
+
+                <div id="srm2group">
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Expected % — Control <span class="tooltip" data-tip="The planned percentage of traffic for this group.">ⓘ</span></label>
+                            <input type="number" id="srmExpCtrl" value="50" min="1" max="99" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Expected % — Treatment</label>
+                            <input type="number" id="srmExpTreat" value="50" min="1" max="99" step="0.1">
+                        </div>
                     </div>
-                    <div class="result-card">
-                        <span class="result-label">P-Value</span>
-                        <span class="result-value" id="srmPval">—</span>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Observed Users — Control</label>
+                            <input type="number" id="srmObsCtrl" placeholder="e.g. 4900" min="0" step="1">
+                            <span class="error-msg" id="err-srmObsCtrl">Required.</span>
+                        </div>
+                        <div class="input-group">
+                            <label>Observed Users — Treatment</label>
+                            <input type="number" id="srmObsTreat" placeholder="e.g. 5100" min="0" step="1">
+                            <span class="error-msg" id="err-srmObsTreat">Required.</span>
+                        </div>
                     </div>
-                    <div class="result-card result-card-wide" id="srmVerdict">
-                        <span class="result-label">Verdict</span>
-                        <span class="result-value" id="srmVerdictText">—</span>
+                </div>
+
+                <div id="srm3group" class="hidden">
+                    <div class="input-row input-row-3">
+                        <div class="input-group">
+                            <label>Expected % — Control</label>
+                            <input type="number" id="srmExpCtrl3" value="34" min="1" max="98" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Expected % — T1</label>
+                            <input type="number" id="srmExpT13" value="33" min="1" max="98" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>Expected % — T2</label>
+                            <input type="number" id="srmExpT23" value="33" min="1" max="98" step="0.1">
+                        </div>
                     </div>
+                    <div class="input-row input-row-3">
+                        <div class="input-group">
+                            <label>Observed — Control</label>
+                            <input type="number" id="srmObsCtrl3" placeholder="e.g. 3300" min="0" step="1">
+                            <span class="error-msg" id="err-srmObsCtrl3">Required.</span>
+                        </div>
+                        <div class="input-group">
+                            <label>Observed — T1</label>
+                            <input type="number" id="srmObsT13" placeholder="e.g. 3400" min="0" step="1">
+                            <span class="error-msg" id="err-srmObsT13">Required.</span>
+                        </div>
+                        <div class="input-group">
+                            <label>Observed — T2</label>
+                            <input type="number" id="srmObsT23" placeholder="e.g. 3300" min="0" step="1">
+                            <span class="error-msg" id="err-srmObsT23">Required.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="checkSRM()">Check Traffic Split</button>
+
+                <div id="srmResults" class="hidden">
+                    <div id="srmBadge"></div>
+                    <button class="advanced-toggle" onclick="toggleAdvanced(this)">
+                        <span class="adv-icon">+</span> Show Advanced Statistics
+                    </button>
+                    <div class="advanced-content" id="srmAdvanced"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">What is SRM?</h2>
+                <div class="term-explain">
+                    <p><strong>SRM stands for Sample Ratio Mismatch.</strong> It checks whether the actual traffic split matches what was planned. If traffic is not split correctly, the experiment results cannot be trusted — even if the numbers look good. Always check for SRM before analyzing results.</p>
                 </div>
             </div>
         </section>
 
-        <!-- 5. LIFT CALCULATOR -->
+        <!-- ================================================
+             PAGE 4: LIFT CALCULATOR
+             ================================================ -->
         <section class="content-section" id="lift">
             <div class="section-header">
                 <h1>Lift Calculator</h1>
-                <p class="section-desc">Compute absolute & relative lift, statistical significance, and confidence intervals for your experiment results.</p>
+                <p class="section-desc">Measure the impact of your experiment and determine whether the result is statistically significant.</p>
             </div>
-            <div class="calculator-grid">
-                <div class="calc-inputs">
+
+            <div class="card">
+                <h2 class="card-title">Enter Your Experiment Data</h2>
+                <div class="input-row">
                     <div class="input-group">
-                        <label>Control Conversions</label>
-                        <input type="number" id="liftControlConv" value="500" min="0">
+                        <label>Control Users</label>
+                        <input type="number" id="liftCtrlUsers" placeholder="e.g. 10000" min="1" step="1">
+                        <span class="error-msg" id="err-liftCtrlUsers">Required.</span>
                     </div>
                     <div class="input-group">
-                        <label>Control Sample Size</label>
-                        <input type="number" id="liftControlN" value="10000" min="1">
+                        <label>Control Conversions</label>
+                        <input type="number" id="liftCtrlConv" placeholder="e.g. 500" min="0" step="1">
+                        <span class="error-msg" id="err-liftCtrlConv">Required.</span>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Treatment Users</label>
+                        <input type="number" id="liftTreatUsers" placeholder="e.g. 10000" min="1" step="1">
+                        <span class="error-msg" id="err-liftTreatUsers">Required.</span>
                     </div>
                     <div class="input-group">
                         <label>Treatment Conversions</label>
-                        <input type="number" id="liftTreatConv" value="550" min="0">
+                        <input type="number" id="liftTreatConv" placeholder="e.g. 550" min="0" step="1">
+                        <span class="error-msg" id="err-liftTreatConv">Required.</span>
                     </div>
+                </div>
+                <div class="input-row">
                     <div class="input-group">
-                        <label>Treatment Sample Size</label>
-                        <input type="number" id="liftTreatN" value="10000" min="1">
+                        <label>Confidence Level (%) <span class="tooltip" data-tip="How confident you want to be. 95% is standard.">ⓘ</span></label>
+                        <input type="number" id="liftConfidence" value="95" min="80" max="99.9" step="0.1">
                     </div>
-                    <button class="btn-primary" onclick="calculateLift()">Calculate Lift</button>
-                </div>
-                <div class="calc-results" id="liftResults">
-                    <div class="result-card">
-                        <span class="result-label">Control Rate</span>
-                        <span class="result-value" id="liftCR">—</span>
-                    </div>
-                    <div class="result-card">
-                        <span class="result-label">Treatment Rate</span>
-                        <span class="result-value" id="liftTR">—</span>
-                    </div>
-                    <div class="result-card">
-                        <span class="result-label">Absolute Lift</span>
-                        <span class="result-value" id="liftAbs">—</span>
-                    </div>
-                    <div class="result-card">
-                        <span class="result-label">Relative Lift</span>
-                        <span class="result-value" id="liftRel">—</span>
-                    </div>
-                    <div class="result-card">
-                        <span class="result-label">Z-Score</span>
-                        <span class="result-value" id="liftZ">—</span>
-                    </div>
-                    <div class="result-card">
-                        <span class="result-label">P-Value</span>
-                        <span class="result-value" id="liftPval">—</span>
-                    </div>
-                    <div class="result-card result-card-wide">
-                        <span class="result-label">95% Confidence Interval (Absolute)</span>
-                        <span class="result-value" id="liftCI">—</span>
-                    </div>
-                    <div class="result-card result-card-wide" id="liftVerdict">
-                        <span class="result-label">Significance</span>
-                        <span class="result-value" id="liftVerdictText">—</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 6. SQL TEMPLATES -->
-        <section class="content-section" id="sql">
-            <div class="section-header">
-                <h1>SQL Templates</h1>
-                <p class="section-desc">Copy-paste SQL queries for iimjobs experiment analysis. Schema: <code>users</code>, <code>experiment_assignments</code>, <code>events</code>, <code>applications</code>.</p>
-            </div>
-            <div class="sql-templates">
-                <div class="sql-block">
-                    <div class="sql-header" onclick="toggleSQL(this)">
-                        <span>📋 Assignment Table Query</span>
-                        <span class="sql-toggle">▼</span>
-                    </div>
-                    <div class="sql-body">
-                        <pre><code>-- Fetch experiment assignments with user metadata
-SELECT
-    ea.user_id,
-    ea.experiment_id,
-    ea.variant,
-    ea.assigned_at,
-    u.signup_date,
-    u.platform,
-    u.city,
-    u.user_type  -- 'jobseeker' or 'recruiter'
-FROM experiment_assignments ea
-JOIN users u ON ea.user_id = u.user_id
-WHERE ea.experiment_id = 'EXP-2026-042'
-  AND ea.assigned_at >= '2026-01-15'
-ORDER BY ea.assigned_at;</code></pre>
-                        <button class="btn-copy" onclick="copySQL(this)">Copy</button>
-                    </div>
+                    <div class="input-group"></div>
                 </div>
 
-                <div class="sql-block">
-                    <div class="sql-header" onclick="toggleSQL(this)">
-                        <span>⚖️ SRM Check Query</span>
-                        <span class="sql-toggle">▼</span>
-                    </div>
-                    <div class="sql-body">
-                        <pre><code>-- Sample Ratio Mismatch check
--- Compare observed vs expected traffic split
-SELECT
-    variant,
-    COUNT(DISTINCT user_id) AS user_count,
-    ROUND(100.0 * COUNT(DISTINCT user_id) /
-        SUM(COUNT(DISTINCT user_id)) OVER(), 2) AS pct_traffic
-FROM experiment_assignments
-WHERE experiment_id = 'EXP-2026-042'
-GROUP BY variant
-ORDER BY variant;
+                <button class="btn-primary" onclick="calculateLift()">Calculate Lift</button>
 
--- Expected: 50/50 split
--- Flag if deviation > 1% or chi-square p < 0.01</code></pre>
-                        <button class="btn-copy" onclick="copySQL(this)">Copy</button>
-                    </div>
-                </div>
-
-                <div class="sql-block">
-                    <div class="sql-header" onclick="toggleSQL(this)">
-                        <span>📊 Conversion Calculation</span>
-                        <span class="sql-toggle">▼</span>
-                    </div>
-                    <div class="sql-body">
-                        <pre><code>-- Job application conversion rate by variant
--- ITT analysis: all assigned users, not just those who saw the feature
-SELECT
-    ea.variant,
-    COUNT(DISTINCT ea.user_id) AS total_users,
-    COUNT(DISTINCT a.user_id) AS converted_users,
-    ROUND(100.0 * COUNT(DISTINCT a.user_id) /
-        NULLIF(COUNT(DISTINCT ea.user_id), 0), 4) AS conversion_rate_pct,
-    COUNT(a.application_id) AS total_applications,
-    ROUND(1.0 * COUNT(a.application_id) /
-        NULLIF(COUNT(DISTINCT ea.user_id), 0), 4) AS applications_per_user
-FROM experiment_assignments ea
-LEFT JOIN applications a
-    ON ea.user_id = a.user_id
-    AND a.applied_at >= ea.assigned_at
-    AND a.applied_at < ea.assigned_at + INTERVAL '14 days'
-WHERE ea.experiment_id = 'EXP-2026-042'
-GROUP BY ea.variant
-ORDER BY ea.variant;</code></pre>
-                        <button class="btn-copy" onclick="copySQL(this)">Copy</button>
-                    </div>
-                </div>
-
-                <div class="sql-block">
-                    <div class="sql-header" onclick="toggleSQL(this)">
-                        <span>🛡️ Guardrail Calculation</span>
-                        <span class="sql-toggle">▼</span>
-                    </div>
-                    <div class="sql-body">
-                        <pre><code>-- Guardrail metrics: revenue, errors, latency, drop-offs
-SELECT
-    ea.variant,
-
-    -- Revenue per user
-    ROUND(SUM(COALESCE(e.revenue, 0)) /
-        NULLIF(COUNT(DISTINCT ea.user_id), 0), 2) AS revenue_per_user,
-
-    -- Error rate
-    ROUND(100.0 * SUM(CASE WHEN e.event_type = 'error' THEN 1 ELSE 0 END) /
-        NULLIF(COUNT(e.event_id), 0), 4) AS error_rate_pct,
-
-    -- Avg page load time (ms)
-    ROUND(AVG(CASE WHEN e.event_type = 'page_load'
-        THEN e.latency_ms END), 0) AS avg_latency_ms,
-
-    -- Drop-off rate (started application but didn't submit)
-    ROUND(100.0 *
-        (COUNT(DISTINCT CASE WHEN e.event_type = 'application_start' THEN e.user_id END) -
-         COUNT(DISTINCT CASE WHEN e.event_type = 'application_submit' THEN e.user_id END)) /
-        NULLIF(COUNT(DISTINCT CASE WHEN e.event_type = 'application_start'
-            THEN e.user_id END), 0), 2) AS dropoff_rate_pct
-
-FROM experiment_assignments ea
-LEFT JOIN events e
-    ON ea.user_id = e.user_id
-    AND e.event_time >= ea.assigned_at
-WHERE ea.experiment_id = 'EXP-2026-042'
-GROUP BY ea.variant;</code></pre>
-                        <button class="btn-copy" onclick="copySQL(this)">Copy</button>
-                    </div>
-                </div>
-
-                <div class="sql-block">
-                    <div class="sql-header" onclick="toggleSQL(this)">
-                        <span>🔬 Balance Test Query</span>
-                        <span class="sql-toggle">▼</span>
-                    </div>
-                    <div class="sql-body">
-                        <pre><code>-- Balance test: compare pre-treatment covariates across variants
--- Significant differences suggest randomization failure
-SELECT
-    ea.variant,
-    COUNT(DISTINCT ea.user_id) AS n_users,
-
-    -- Platform distribution
-    ROUND(100.0 * SUM(CASE WHEN u.platform = 'mobile' THEN 1 ELSE 0 END) /
-        COUNT(*), 2) AS pct_mobile,
-    ROUND(100.0 * SUM(CASE WHEN u.platform = 'desktop' THEN 1 ELSE 0 END) /
-        COUNT(*), 2) AS pct_desktop,
-
-    -- User type distribution
-    ROUND(100.0 * SUM(CASE WHEN u.user_type = 'jobseeker' THEN 1 ELSE 0 END) /
-        COUNT(*), 2) AS pct_jobseeker,
-
-    -- Avg account age (days)
-    ROUND(AVG(DATEDIFF('day', u.signup_date, ea.assigned_at)), 1) AS avg_account_age_days,
-
-    -- Avg pre-treatment applications (30 days before assignment)
-    ROUND(AVG(pre.app_count), 2) AS avg_pre_apps
-
-FROM experiment_assignments ea
-JOIN users u ON ea.user_id = u.user_id
-LEFT JOIN (
-    SELECT user_id, COUNT(*) AS app_count
-    FROM applications
-    WHERE applied_at >= CURRENT_DATE - INTERVAL '60 days'
-      AND applied_at < (SELECT MIN(assigned_at) FROM experiment_assignments
-                        WHERE experiment_id = 'EXP-2026-042')
-    GROUP BY user_id
-) pre ON ea.user_id = pre.user_id
-WHERE ea.experiment_id = 'EXP-2026-042'
-GROUP BY ea.variant;</code></pre>
-                        <button class="btn-copy" onclick="copySQL(this)">Copy</button>
-                    </div>
-                </div>
-
-                <div class="sql-block">
-                    <div class="sql-header" onclick="toggleSQL(this)">
-                        <span>🎯 ITT Analysis Query</span>
-                        <span class="sql-toggle">▼</span>
-                    </div>
-                    <div class="sql-body">
-                        <pre><code>-- Intent-to-Treat analysis with full statistical output
--- Includes all assigned users regardless of feature exposure
-WITH variant_stats AS (
-    SELECT
-        ea.variant,
-        COUNT(DISTINCT ea.user_id) AS n,
-        COUNT(DISTINCT a.user_id) AS conversions,
-        1.0 * COUNT(DISTINCT a.user_id) / COUNT(DISTINCT ea.user_id) AS conv_rate
-    FROM experiment_assignments ea
-    LEFT JOIN applications a
-        ON ea.user_id = a.user_id
-        AND a.applied_at >= ea.assigned_at
-        AND a.applied_at < ea.assigned_at + INTERVAL '14 days'
-    WHERE ea.experiment_id = 'EXP-2026-042'
-    GROUP BY ea.variant
-)
-SELECT
-    c.conv_rate AS control_rate,
-    t.conv_rate AS treatment_rate,
-    t.conv_rate - c.conv_rate AS absolute_lift,
-    (t.conv_rate - c.conv_rate) / NULLIF(c.conv_rate, 0) AS relative_lift,
-    c.n AS control_n,
-    t.n AS treatment_n
-FROM variant_stats c
-CROSS JOIN variant_stats t
-WHERE c.variant = 'control'
-  AND t.variant = 'treatment';</code></pre>
-                        <button class="btn-copy" onclick="copySQL(this)">Copy</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 7. MONITORING DASHBOARD -->
-        <section class="content-section" id="dashboard">
-            <div class="section-header">
-                <h1>Experiment Monitoring Dashboard</h1>
-                <p class="section-desc">Live monitoring view (mock data). Experiment: <strong>EXP-2026-042 — "Simplified Apply Flow"</strong></p>
-            </div>
-            <div class="dashboard-status-bar">
-                <span class="status-pill status-live">● Live — Day 9 of 14</span>
-                <span class="status-pill">Traffic: 98,412 users</span>
-                <span class="status-pill status-ok">SRM: Valid</span>
-            </div>
-            <div class="dashboard-grid">
-                <div class="dash-card">
-                    <div class="dash-card-header">
-                        <span>Conversion Rate</span>
-                        <span class="dash-badge dash-up">+9.8%</span>
-                    </div>
-                    <canvas id="chartConversion" height="180"></canvas>
-                    <div class="dash-card-footer">
-                        <span>Control: <strong>5.02%</strong></span>
-                        <span>Treatment: <strong>5.51%</strong></span>
-                    </div>
-                </div>
-                <div class="dash-card">
-                    <div class="dash-card-header">
-                        <span>Revenue Per User (₹)</span>
-                        <span class="dash-badge dash-neutral">+1.2%</span>
-                    </div>
-                    <canvas id="chartRevenue" height="180"></canvas>
-                    <div class="dash-card-footer">
-                        <span>Control: <strong>₹42.30</strong></span>
-                        <span>Treatment: <strong>₹42.80</strong></span>
-                    </div>
-                </div>
-                <div class="dash-card">
-                    <div class="dash-card-header">
-                        <span>Applications Per User</span>
-                        <span class="dash-badge dash-up">+12.1%</span>
-                    </div>
-                    <canvas id="chartApplications" height="180"></canvas>
-                    <div class="dash-card-footer">
-                        <span>Control: <strong>1.82</strong></span>
-                        <span>Treatment: <strong>2.04</strong></span>
-                    </div>
-                </div>
-                <div class="dash-card">
-                    <div class="dash-card-header">
-                        <span>Error Rate</span>
-                        <span class="dash-badge dash-ok">Stable</span>
-                    </div>
-                    <canvas id="chartErrors" height="180"></canvas>
-                    <div class="dash-card-footer">
-                        <span>Control: <strong>0.31%</strong></span>
-                        <span>Treatment: <strong>0.29%</strong></span>
-                    </div>
-                </div>
-            </div>
-            <div class="dashboard-grid dashboard-grid-2">
-                <div class="dash-card dash-card-compact">
-                    <h3>SRM Status</h3>
-                    <div class="srm-visual">
-                        <div class="srm-bar">
-                            <div class="srm-fill-control" style="width:50.3%">Control 50.3%</div>
-                            <div class="srm-fill-treat" style="width:49.7%">Treatment 49.7%</div>
+                <div id="liftResults" class="hidden">
+                    <div class="result-grid result-grid-4">
+                        <div class="result-card">
+                            <div class="result-value" id="liftCtrlRate">–</div>
+                            <div class="result-label">Control Rate</div>
                         </div>
-                        <div class="srm-details">
-                            <span>χ² = 0.81</span>
-                            <span>p = 0.368</span>
-                            <span class="tag tag-green">No SRM Detected</span>
+                        <div class="result-card">
+                            <div class="result-value" id="liftTreatRate">–</div>
+                            <div class="result-label">Treatment Rate</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-value" id="liftAbsLift">–</div>
+                            <div class="result-label">Absolute Lift</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-value" id="liftRelLift">–</div>
+                            <div class="result-label">Relative Lift</div>
                         </div>
                     </div>
-                </div>
-                <div class="dash-card dash-card-compact">
-                    <h3>Guardrail Alerts</h3>
-                    <div class="guardrail-list">
-                        <div class="guardrail-item guardrail-ok"><span>Revenue/User</span><span class="tag tag-green">✓ Within bounds</span></div>
-                        <div class="guardrail-item guardrail-ok"><span>Page Latency</span><span class="tag tag-green">✓ Within bounds</span></div>
-                        <div class="guardrail-item guardrail-ok"><span>Error Rate</span><span class="tag tag-green">✓ Within bounds</span></div>
-                        <div class="guardrail-item guardrail-ok"><span>Drop-off Rate</span><span class="tag tag-green">✓ Within bounds</span></div>
-                        <div class="guardrail-item guardrail-ok"><span>Complaint Rate</span><span class="tag tag-green">✓ Within bounds</span></div>
+
+                    <!-- CI Visualization -->
+                    <div class="ci-visual">
+                        <p class="ci-text" id="liftCIText"></p>
+                        <p class="ci-range" id="liftCIRange"></p>
+                        <div class="ci-bar-container">
+                            <div class="ci-bar-track"></div>
+                            <div class="ci-bar-zero"><span class="ci-zero-label">0</span></div>
+                            <div class="ci-bar-range" id="liftCIBar"></div>
+                            <div class="ci-bar-point" id="liftCIPoint"></div>
+                        </div>
+                        <div class="ci-bar-labels">
+                            <span>← Negative</span>
+                            <span>Positive →</span>
+                        </div>
                     </div>
+
+                    <div id="liftSignificance"></div>
+
+                    <button class="advanced-toggle" onclick="toggleAdvanced(this)">
+                        <span class="adv-icon">+</span> Show Advanced Statistics
+                    </button>
+                    <div class="advanced-content" id="liftAdvanced"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">What do these results mean?</h2>
+                <div class="term-explain">
+                    <p><strong>Absolute Lift</strong> — The direct percentage-point difference between treatment and control.</p>
+                    <p><strong>Relative Lift</strong> — The percentage improvement compared to the control rate.</p>
                 </div>
             </div>
         </section>
 
-        <!-- 8. EXPERIMENT REGISTRY -->
-        <section class="content-section" id="registry">
+        <!-- ================================================
+             PAGE 5: UNDERSTAND THE TERMS
+             ================================================ -->
+        <section class="content-section" id="terms">
             <div class="section-header">
-                <h1>Experiment Registry</h1>
-                <p class="section-desc">Central record of all experiments. Add, edit, export, and track every test.</p>
+                <h1>Understand the Terms</h1>
+                <p class="section-desc">A plain-language guide to every metric and concept used in this tool.</p>
             </div>
-            <div class="registry-actions">
-                <button class="btn-primary" onclick="addRegistryRow()">+ Add Experiment</button>
-                <button class="btn-secondary" onclick="exportCSV()">Export CSV</button>
-                <button class="btn-secondary" onclick="exportPDF()">Download PDF Report</button>
-            </div>
-            <div class="table-wrapper">
-                <table class="data-table registry-table" id="registryTable">
-                    <thead>
-                        <tr>
-                            <th>Experiment ID</th>
-                            <th>Hypothesis</th>
-                            <th>Owner</th>
-                            <th>Start</th>
-                            <th>End</th>
-                            <th>Status</th>
-                            <th>Primary Metric</th>
-                            <th>Result</th>
-                            <th>Decision</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="registryBody">
-                    </tbody>
-                </table>
-            </div>
-        </section>
 
-        <!-- 9. GUARDRAIL FRAMEWORK -->
-        <section class="content-section" id="guardrails">
-            <div class="section-header">
-                <h1>Guardrail Framework</h1>
-                <p class="section-desc">Guardrails are safety metrics monitored during every experiment. A guardrail breach may require pausing or killing the test.</p>
-            </div>
-            <div class="guardrail-cards">
-                <div class="gf-card">
-                    <div class="gf-icon">💰</div>
-                    <h3>Revenue Per User</h3>
-                    <div class="gf-threshold">Threshold: ≤ −2% relative decline</div>
-                    <p>Revenue is the lifeblood of the business. Even if a treatment boosts engagement, a revenue drop signals that monetization may be degraded. We track revenue per assigned user (ITT basis) to ensure experiments do not erode premium subscriptions, recruiter spend, or ad revenue. A statistically significant decline beyond the threshold triggers an automatic review.</p>
+            <div class="card">
+                <div class="terms-group">
+                    <h3 class="terms-group-title">Framework Terms</h3>
+                    <div id="termsFramework"></div>
                 </div>
-                <div class="gf-card">
-                    <div class="gf-icon">⏱️</div>
-                    <h3>Page Latency (P95)</h3>
-                    <div class="gf-threshold">Threshold: ≤ +200ms at P95</div>
-                    <p>Performance directly impacts conversion. Research shows every 100ms of added latency reduces applications by ~0.5%. We monitor P95 latency for key pages (search results, job detail, application form) to ensure experiments don't introduce regressions. This catches heavy frontend changes, slow API calls, and rendering bottlenecks before they impact users at scale.</p>
+                <div class="terms-group">
+                    <h3 class="terms-group-title">Sample Size Terms</h3>
+                    <div id="termsSample"></div>
                 </div>
-                <div class="gf-card">
-                    <div class="gf-icon">🚨</div>
-                    <h3>Error Rate</h3>
-                    <div class="gf-threshold">Threshold: ≤ +0.1pp absolute increase</div>
-                    <p>Error rate captures JavaScript exceptions, failed API calls, and broken pages. Even a small increase in errors can compound across thousands of users, causing application drops and trust erosion. We compare client-side and server-side error rates between variants to catch bugs introduced by the experiment code. Breaches require immediate engineering investigation.</p>
+                <div class="terms-group">
+                    <h3 class="terms-group-title">SRM Terms</h3>
+                    <div id="termsSRM"></div>
                 </div>
-                <div class="gf-card">
-                    <div class="gf-icon">🚪</div>
-                    <h3>Funnel Drop-off Rate</h3>
-                    <div class="gf-threshold">Threshold: ≤ +3pp absolute increase in application funnel drop-off</div>
-                    <p>Drop-off rate measures the percentage of users who start the application flow but don't complete it. An increase suggests UX friction, confusing changes, or broken steps in the funnel. This metric is particularly important for iimjobs because completed applications are the core value exchange between candidates and recruiters.</p>
+                <div class="terms-group">
+                    <h3 class="terms-group-title">Lift Terms</h3>
+                    <div id="termsLift"></div>
                 </div>
-                <div class="gf-card">
-                    <div class="gf-icon">📣</div>
-                    <h3>Complaint Rate</h3>
-                    <div class="gf-threshold">Threshold: ≤ +50% relative increase</div>
-                    <p>Complaint rate tracks support tickets, in-app feedback, and NPS detractors attributable to experiment variants. While noisier than other guardrails, a spike in complaints is an early warning signal for user trust issues. We tag support tickets with experiment IDs when possible and monitor sentiment during experiment windows.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- 10. COMMON MISTAKES -->
-        <section class="content-section" id="mistakes">
-            <div class="section-header">
-                <h1>Common Experiment Mistakes</h1>
-                <p class="section-desc">Pitfalls that invalidate experiments and lead to bad decisions. Avoid these at all costs.</p>
-            </div>
-            <div class="mistakes-list">
-                <div class="mistake-card">
-                    <div class="mistake-header">
-                        <span class="mistake-severity severity-critical">CRITICAL</span>
-                        <h3>Peeking Bias</h3>
-                    </div>
-                    <p><strong>What:</strong> Checking results before the planned sample size is reached and making decisions based on intermediate data.</p>
-                    <p><strong>Why it's dangerous:</strong> P-values fluctuate wildly early in an experiment. Stopping at a "significant" intermediate point dramatically inflates your false positive rate — potentially to 30% or more instead of 5%.</p>
-                    <p><strong>Fix:</strong> Pre-commit to the experiment duration based on the power analysis. If you must monitor early, use sequential testing methods (e.g., group-sequential boundaries or always-valid p-values) that control the overall Type I error rate.</p>
-                </div>
-                <div class="mistake-card">
-                    <div class="mistake-header">
-                        <span class="mistake-severity severity-critical">CRITICAL</span>
-                        <h3>Ignoring SRM</h3>
-                    </div>
-                    <p><strong>What:</strong> Proceeding with analysis when a Sample Ratio Mismatch is detected.</p>
-                    <p><strong>Why it's dangerous:</strong> SRM means the randomization is broken — control and treatment are no longer comparable. Any observed lift may be entirely due to the bias in assignment, not the treatment itself. Results are uninterpretable.</p>
-                    <p><strong>Fix:</strong> Run SRM checks daily. If SRM is detected (p < 0.01), pause the experiment, investigate the root cause (bot traffic, redirect failures, browser-specific bugs), fix it, and restart with fresh data.</p>
-                </div>
-                <div class="mistake-card">
-                    <div class="mistake-header">
-                        <span class="mistake-severity severity-high">HIGH</span>
-                        <h3>Segment Fishing (P-Hacking)</h3>
-                    </div>
-                    <p><strong>What:</strong> Slicing results by many segments (mobile vs desktop, city, age) until finding one that is "significant."</p>
-                    <p><strong>Why it's dangerous:</strong> With 20 segments, you expect ~1 to be "significant" at p < 0.05 purely by chance. Reporting only the significant subgroup is misleading and not reproducible.</p>
-                    <p><strong>Fix:</strong> Pre-register segments of interest. Apply Bonferroni or Benjamini-Hochberg correction for multiple comparisons. Treat exploratory subgroup analysis as hypothesis-generating, not conclusive.</p>
-                </div>
-                <div class="mistake-card">
-                    <div class="mistake-header">
-                        <span class="mistake-severity severity-high">HIGH</span>
-                        <h3>Post-Treatment Filtering</h3>
-                    </div>
-                    <p><strong>What:</strong> Filtering the analysis population based on behavior that occurred after treatment assignment (e.g., "only users who visited the job detail page").</p>
-                    <p><strong>Why it's dangerous:</strong> The treatment itself may influence whether users take the filtering action, breaking the randomization. You're comparing different populations across variants — selection bias makes the comparison invalid.</p>
-                    <p><strong>Fix:</strong> Always use ITT (Intent-to-Treat) analysis. Include all randomized users regardless of their post-assignment behavior. If you need to understand complier effects, use CACE/LATE estimators with proper IV methods.</p>
-                </div>
-                <div class="mistake-card">
-                    <div class="mistake-header">
-                        <span class="mistake-severity severity-medium">MEDIUM</span>
-                        <h3>Underpowered Tests</h3>
-                    </div>
-                    <p><strong>What:</strong> Running experiments without sufficient sample size to detect the desired effect.</p>
-                    <p><strong>Why it's dangerous:</strong> Low power means you'll miss real effects (high false negative rate). When you do find significance, it's more likely to be inflated — the "winner's curse." This leads to shipping inconsequential changes or abandoning good ideas.</p>
-                    <p><strong>Fix:</strong> Always run a power analysis before launch. Be honest about your MDE — if traffic is insufficient for the desired sensitivity, consider longer test windows, pooled metrics, or CUPED variance reduction techniques.</p>
-                </div>
-                <div class="mistake-card">
-                    <div class="mistake-header">
-                        <span class="mistake-severity severity-medium">MEDIUM</span>
-                        <h3>Metric Switching</h3>
-                    </div>
-                    <p><strong>What:</strong> Changing the primary metric after seeing results — e.g., the pre-registered metric shows no lift, so you report a different metric that does.</p>
-                    <p><strong>Why it's dangerous:</strong> This is a form of p-hacking. With enough metrics, something will be significant by chance. Switching the primary metric post-hoc inflates false discovery rate and erodes trust in the experimentation program.</p>
-                    <p><strong>Fix:</strong> Lock the primary metric in the experiment design doc before launch. Secondary metrics can be analyzed for learning but should not override the primary metric for ship decisions. Document all metric changes transparently.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- 11. BI AGENT TOOLS -->
-        <section class="content-section" id="bi-tools">
-            <div class="section-header">
-                <h1>BI Agent Tools</h1>
-                <p class="section-desc">Quick links to internal BI tools, data sources, and automation agents used by the analytics team.</p>
-            </div>
-            <div class="bi-tools-grid">
-                <a href="#" class="bi-tool-card">
-                    <div class="bi-icon">📊</div>
-                    <h3>Metabase</h3>
-                    <p>Self-serve dashboards, ad-hoc SQL queries, and scheduled reports for experiment monitoring.</p>
-                    <span class="bi-link">Open Metabase →</span>
-                </a>
-                <a href="#" class="bi-tool-card">
-                    <div class="bi-icon">🔍</div>
-                    <h3>Looker / Data Studio</h3>
-                    <p>Executive dashboards and business KPI tracking. Experiment impact summaries for leadership review.</p>
-                    <span class="bi-link">Open Looker →</span>
-                </a>
-                <a href="#" class="bi-tool-card">
-                    <div class="bi-icon">🤖</div>
-                    <h3>Internal GPT Agent</h3>
-                    <p>Natural language interface for querying experiment results. Ask "What's the lift for EXP-042?" and get instant answers.</p>
-                    <span class="bi-link">Launch Agent →</span>
-                </a>
-                <a href="#" class="bi-tool-card">
-                    <div class="bi-icon">🗂️</div>
-                    <h3>dbt Project</h3>
-                    <p>Data transformation layer. Experiment metrics models, staging tables, and documentation live here.</p>
-                    <span class="bi-link">Open dbt Docs →</span>
-                </a>
-                <a href="#" class="bi-tool-card">
-                    <div class="bi-icon">📡</div>
-                    <h3>Airflow / Dagster</h3>
-                    <p>Orchestration for daily experiment metric pipelines, SRM checks, and guardrail alert jobs.</p>
-                    <span class="bi-link">Open Orchestrator →</span>
-                </a>
-                <a href="#" class="bi-tool-card">
-                    <div class="bi-icon">📬</div>
-                    <h3>Slack Bot — Experiment Alerts</h3>
-                    <p>Automated alerts for SRM violations, guardrail breaches, and experiment milestones. Posts to #analytics-experiments.</p>
-                    <span class="bi-link">Configure Bot →</span>
-                </a>
             </div>
         </section>
 
     </main>
-
     <script src="script.js"></script>
 </body>
 </html>
