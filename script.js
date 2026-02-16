@@ -1,20 +1,17 @@
 /* ============================================
-   iimjobs Experiment Hub — Application Logic
+   IIMJobs Experiment Hub — Application Logic v2.1
    ============================================ */
 
-// ========================
-// NAVIGATION
-// ========================
 document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
     initThemeToggle();
     initMobileMenu();
-    initChecklistProgress();
-    initSQLBlocks();
-    initRegistryData();
-    initDashboardCharts();
+    buildTermsGlossary();
 });
 
+/* ========================
+   NAVIGATION
+   ======================== */
 function initNavigation() {
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
@@ -22,11 +19,9 @@ function initNavigation() {
             e.preventDefault();
             const sectionId = item.getAttribute('data-section');
             switchSection(sectionId);
-            // Close mobile sidebar
             document.getElementById('sidebar').classList.remove('open');
         });
     });
-    // Handle hash on load
     const hash = window.location.hash.replace('#', '');
     if (hash) switchSection(hash);
 }
@@ -34,31 +29,24 @@ function initNavigation() {
 function switchSection(sectionId) {
     document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
     const section = document.getElementById(sectionId);
     const navItem = document.querySelector(`[data-section="${sectionId}"]`);
     if (section) section.classList.add('active');
     if (navItem) navItem.classList.add('active');
-
     window.location.hash = sectionId;
     window.scrollTo({ top: 0 });
-
-    // Re-render charts if switching to dashboard
-    if (sectionId === 'dashboard') {
-        setTimeout(initDashboardCharts, 100);
-    }
 }
 
-// ========================
-// THEME TOGGLE
-// ========================
+/* ========================
+   THEME TOGGLE
+   ======================== */
 function initThemeToggle() {
     const stored = localStorage.getItem('theme') || 'dark';
     document.documentElement.setAttribute('data-theme', stored);
-
     document.getElementById('themeToggle').addEventListener('click', toggleTheme);
     const mobileToggle = document.getElementById('themeToggleMobile');
     if (mobileToggle) mobileToggle.addEventListener('click', toggleTheme);
+    updateMobileThemeIcon(stored);
 }
 
 function toggleTheme() {
@@ -66,32 +54,31 @@ function toggleTheme() {
     const next = current === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('theme', next);
-    const mobileToggle = document.getElementById('themeToggleMobile');
-    if (mobileToggle) mobileToggle.textContent = next === 'dark' ? '🌙' : '☀️';
-    // Redraw charts with new theme
-    if (document.getElementById('dashboard').classList.contains('active')) {
-        setTimeout(initDashboardCharts, 50);
-    }
+    updateMobileThemeIcon(next);
 }
 
-// ========================
-// MOBILE MENU
-// ========================
+function updateMobileThemeIcon(theme) {
+    const btn = document.getElementById('themeToggleMobile');
+    if (btn) btn.textContent = theme === 'dark' ? '🌙' : '☀️';
+}
+
+/* ========================
+   MOBILE MENU
+   ======================== */
 function initMobileMenu() {
     document.getElementById('hamburger').addEventListener('click', () => {
         document.getElementById('sidebar').classList.toggle('open');
     });
-    // Close on outside click
     document.getElementById('mainContent').addEventListener('click', () => {
         document.getElementById('sidebar').classList.remove('open');
     });
 }
 
-// ========================
-// STATISTICAL FUNCTIONS
-// ========================
+/* ========================
+   STATISTICAL HELPERS
+   ======================== */
 
-// Standard normal CDF (Abramowitz & Stegun approximation)
+// Standard normal CDF (Abramowitz & Stegun)
 function normalCDF(x) {
     const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741;
     const a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
@@ -107,465 +94,373 @@ function normalInv(p) {
     if (p <= 0) return -Infinity;
     if (p >= 1) return Infinity;
     if (p === 0.5) return 0;
-
-    const a = [
-        -3.969683028665376e+01, 2.209460984245205e+02,
-        -2.759285104469687e+02, 1.383577518672690e+02,
-        -3.066479806614716e+01, 2.506628277459239e+00
-    ];
-    const b = [
-        -5.447609879822406e+01, 1.615858368580409e+02,
-        -1.556989798598866e+02, 6.680131188771972e+01,
-        -1.328068155288572e+01
-    ];
-    const c = [
-        -7.784894002430293e-03, -3.223964580411365e-01,
-        -2.400758277161838e+00, -2.549732539343734e+00,
-        4.374664141464968e+00, 2.938163982698783e+00
-    ];
-    const d = [
-        7.784695709041462e-03, 3.224671290700398e-01,
-        2.445134137142996e+00, 3.754408661907416e+00
-    ];
-
-    const p_low = 0.02425;
-    const p_high = 1 - p_low;
+    const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+    const b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+    const c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+    const d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+    const pLow = 0.02425, pHigh = 1 - pLow;
     let q, r;
-
-    if (p < p_low) {
+    if (p < pLow) {
         q = Math.sqrt(-2 * Math.log(p));
-        return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) /
-               ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
-    } else if (p <= p_high) {
-        q = p - 0.5;
-        r = q * q;
-        return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q /
-               (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+        return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+    } else if (p <= pHigh) {
+        q = p - 0.5; r = q * q;
+        return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q / (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
     } else {
         q = Math.sqrt(-2 * Math.log(1 - p));
-        return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) /
-                ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+        return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
     }
 }
 
-// Chi-square CDF (1 degree of freedom)
-function chiSquareCDF1(x) {
+// Log-gamma (Lanczos)
+function lnGamma(z) {
+    const g = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.001208650973866179, -0.000005395239384953];
+    let x = z, y = z, tmp = x + 5.5;
+    tmp -= (x + 0.5) * Math.log(tmp);
+    let ser = 1.000000000190015;
+    for (let j = 0; j < 6; j++) ser += g[j] / ++y;
+    return -tmp + Math.log(2.5066282746310005 * ser / x);
+}
+
+// Regularized lower incomplete gamma (series expansion)
+function gammaPSeries(a, x) {
     if (x <= 0) return 0;
-    return 2 * normalCDF(Math.sqrt(x)) - 1;
+    let sum = 1 / a, term = 1 / a;
+    for (let n = 1; n < 500; n++) {
+        term *= x / (a + n);
+        sum += term;
+        if (Math.abs(term) < 1e-14) break;
+    }
+    return Math.min(1, Math.max(0, sum * Math.exp(-x + a * Math.log(x) - lnGamma(a))));
 }
 
-// ========================
-// SAMPLE SIZE CALCULATOR
-// ========================
-function calculateSampleSize() {
-    const baseline = parseFloat(document.getElementById('ssBaseline').value) / 100;
-    const mde = parseFloat(document.getElementById('ssMDE').value) / 100;
-    const confidence = parseFloat(document.getElementById('ssConfidence').value) / 100;
-    const power = parseFloat(document.getElementById('ssPower').value) / 100;
-    const dailyTraffic = parseInt(document.getElementById('ssDailyTraffic').value);
+// Chi-square CDF
+function chiSqCDF(x, df) {
+    if (x <= 0) return 0;
+    return gammaPSeries(df / 2, x / 2);
+}
 
-    if (isNaN(baseline) || isNaN(mde) || isNaN(confidence) || isNaN(power) || isNaN(dailyTraffic)) {
-        alert('Please fill in all fields with valid numbers.');
-        return;
+// Input validation helper
+function validateField(id) {
+    const el = document.getElementById(id);
+    const val = parseFloat(el.value);
+    if (isNaN(val) || el.value.trim() === '') {
+        el.classList.add('error');
+        return null;
     }
+    el.classList.remove('error');
+    return val;
+}
 
-    const p1 = baseline;
-    const p2 = baseline * (1 + mde);
+function clearErrors(...ids) {
+    ids.forEach(id => document.getElementById(id).classList.remove('error'));
+}
 
-    const zAlpha = normalInv(1 - (1 - confidence) / 2);
+function formatNum(n) {
+    return n >= 1000000 ? (n / 1000000).toFixed(1) + 'M' : n.toLocaleString('en-US');
+}
+
+// Advanced toggle
+function toggleAdvanced(btn) {
+    const content = btn.nextElementSibling;
+    content.classList.toggle('show');
+    const icon = btn.querySelector('.adv-icon');
+    icon.textContent = content.classList.contains('show') ? '−' : '+';
+}
+
+/* ========================
+   SAMPLE SIZE CALCULATOR
+   ======================== */
+let ssGroupCount = 2;
+
+function selectSSGroup(n) {
+    ssGroupCount = n;
+    document.querySelectorAll('#ssGroupSelect .radio-card').forEach((c, i) => {
+        c.classList.toggle('selected', (i === 0 && n === 2) || (i === 1 && n === 3));
+    });
+    document.getElementById('ss2group').classList.toggle('hidden', n !== 2);
+    document.getElementById('ss3group').classList.toggle('hidden', n !== 3);
+    document.getElementById('ssResults').classList.add('hidden');
+}
+
+function calcSampleSizePair(p1, p2, alpha, power) {
+    const zAlpha = normalInv(1 - alpha / 2);
     const zBeta = normalInv(power);
-
-    // Two-proportion z-test formula
-    const n = Math.ceil(
-        Math.pow(zAlpha + zBeta, 2) * (p1 * (1 - p1) + p2 * (1 - p2)) /
-        Math.pow(p2 - p1, 2)
+    const pBar = (p1 + p2) / 2;
+    const numerator = Math.pow(
+        zAlpha * Math.sqrt(2 * pBar * (1 - pBar)) +
+        zBeta * Math.sqrt(p1 * (1 - p1) + p2 * (1 - p2)),
+        2
     );
-
-    const totalN = n * 2;
-    const days = Math.ceil(n / dailyTraffic);
-
-    document.getElementById('ssResultN').textContent = n.toLocaleString();
-    document.getElementById('ssResultTotal').textContent = totalN.toLocaleString();
-    document.getElementById('ssResultDuration').textContent = `${days} days`;
-    document.getElementById('ssResultTreatment').textContent = `${(p2 * 100).toFixed(2)}%`;
-    document.getElementById('ssFormula').style.display = 'block';
+    return Math.ceil(numerator / Math.pow(p1 - p2, 2));
 }
 
-// ========================
-// SRM CHECKER
-// ========================
-function checkSRM() {
-    const control = parseInt(document.getElementById('srmControl').value);
-    const treatment = parseInt(document.getElementById('srmTreatment').value);
-    const expectedPct = parseFloat(document.getElementById('srmExpected').value) / 100;
+function calculateSampleSize() {
+    const confidence = validateField('ssConfidence');
+    const power = validateField('ssPower');
+    const traffic = validateField('ssDailyTraffic');
+    if (confidence === null || power === null || traffic === null) return;
 
-    if (isNaN(control) || isNaN(treatment) || isNaN(expectedPct)) {
-        alert('Please fill in all fields.');
-        return;
-    }
+    const alpha = 1 - confidence / 100;
+    const pow = power / 100;
+    let perGroup, numGroups;
 
-    const total = control + treatment;
-    const expectedControl = total * expectedPct;
-    const expectedTreatment = total * (1 - expectedPct);
-
-    const chiSquare = Math.pow(control - expectedControl, 2) / expectedControl +
-                      Math.pow(treatment - expectedTreatment, 2) / expectedTreatment;
-
-    const pValue = 1 - chiSquareCDF1(chiSquare);
-
-    document.getElementById('srmChi').textContent = chiSquare.toFixed(4);
-    document.getElementById('srmPval').textContent = pValue < 0.0001 ? pValue.toExponential(4) : pValue.toFixed(6);
-
-    const verdictEl = document.getElementById('srmVerdict');
-    const verdictText = document.getElementById('srmVerdictText');
-
-    if (pValue < 0.01) {
-        verdictText.textContent = '🚨 SRM DETECTED — Randomization Invalid';
-        verdictText.style.color = 'var(--danger)';
-        verdictEl.style.borderColor = 'var(--danger)';
-        verdictEl.style.background = 'var(--danger-bg)';
+    if (ssGroupCount === 2) {
+        const baseline = validateField('ssBaseline');
+        const treatment = validateField('ssTreatment');
+        if (baseline === null || treatment === null) return;
+        if (baseline === treatment) {
+            alert('Baseline and treatment rates must be different.');
+            return;
+        }
+        perGroup = calcSampleSizePair(baseline / 100, treatment / 100, alpha, pow);
+        numGroups = 2;
     } else {
-        verdictText.textContent = '✅ Randomization Valid — No SRM Detected';
-        verdictText.style.color = 'var(--success)';
-        verdictEl.style.borderColor = 'var(--success)';
-        verdictEl.style.background = 'var(--success-bg)';
+        const ctrl = validateField('ssCtrl3');
+        const t1 = validateField('ssT1');
+        const t2 = validateField('ssT2');
+        if (ctrl === null || t1 === null || t2 === null) return;
+        // Bonferroni correction: 3 pairwise comparisons
+        const adjAlpha = alpha / 3;
+        const n1 = calcSampleSizePair(ctrl / 100, t1 / 100, adjAlpha, pow);
+        const n2 = calcSampleSizePair(ctrl / 100, t2 / 100, adjAlpha, pow);
+        const n3 = calcSampleSizePair(t1 / 100, t2 / 100, adjAlpha, pow);
+        perGroup = Math.max(n1, n2, n3);
+        numGroups = 3;
     }
+
+    const total = perGroup * numGroups;
+    const days = Math.ceil(perGroup / traffic);
+
+    document.getElementById('ssResPerGroup').textContent = formatNum(perGroup);
+    document.getElementById('ssResTotal').textContent = formatNum(total);
+    document.getElementById('ssResDays').textContent = days + (days === 1 ? ' day' : ' days');
+    document.getElementById('ssResults').classList.remove('hidden');
 }
 
-// ========================
-// LIFT CALCULATOR
-// ========================
-function calculateLift() {
-    const controlConv = parseInt(document.getElementById('liftControlConv').value);
-    const controlN = parseInt(document.getElementById('liftControlN').value);
-    const treatConv = parseInt(document.getElementById('liftTreatConv').value);
-    const treatN = parseInt(document.getElementById('liftTreatN').value);
+/* ========================
+   SRM CHECKER
+   ======================== */
+let srmGroupCount = 2;
 
-    if (isNaN(controlConv) || isNaN(controlN) || isNaN(treatConv) || isNaN(treatN)) {
-        alert('Please fill in all fields.');
-        return;
+function selectSRMGroup(n) {
+    srmGroupCount = n;
+    document.querySelectorAll('#srmGroupSelect .radio-card').forEach((c, i) => {
+        c.classList.toggle('selected', (i === 0 && n === 2) || (i === 1 && n === 3));
+    });
+    document.getElementById('srm2group').classList.toggle('hidden', n !== 2);
+    document.getElementById('srm3group').classList.toggle('hidden', n !== 3);
+    document.getElementById('srmResults').classList.add('hidden');
+}
+
+function checkSRM() {
+    let observed = [], expected = [];
+
+    if (srmGroupCount === 2) {
+        const expCtrl = validateField('srmExpCtrl');
+        const expTreat = validateField('srmExpTreat');
+        const obsCtrl = validateField('srmObsCtrl');
+        const obsTreat = validateField('srmObsTreat');
+        if ([expCtrl, expTreat, obsCtrl, obsTreat].includes(null)) return;
+        const total = obsCtrl + obsTreat;
+        const expSum = expCtrl + expTreat;
+        expected = [total * (expCtrl / expSum), total * (expTreat / expSum)];
+        observed = [obsCtrl, obsTreat];
+    } else {
+        const expCtrl = validateField('srmExpCtrl3');
+        const expT1 = validateField('srmExpT13');
+        const expT2 = validateField('srmExpT23');
+        const obsCtrl = validateField('srmObsCtrl3');
+        const obsT1 = validateField('srmObsT13');
+        const obsT2 = validateField('srmObsT23');
+        if ([expCtrl, expT1, expT2, obsCtrl, obsT1, obsT2].includes(null)) return;
+        const total = obsCtrl + obsT1 + obsT2;
+        const expSum = expCtrl + expT1 + expT2;
+        expected = [
+            total * (expCtrl / expSum),
+            total * (expT1 / expSum),
+            total * (expT2 / expSum)
+        ];
+        observed = [obsCtrl, obsT1, obsT2];
     }
 
-    const pC = controlConv / controlN;
-    const pT = treatConv / treatN;
-    const absLift = pT - pC;
-    const relLift = pC === 0 ? 0 : (pT - pC) / pC;
+    // Chi-square test
+    let chiSq = 0;
+    for (let i = 0; i < observed.length; i++) {
+        chiSq += Math.pow(observed[i] - expected[i], 2) / expected[i];
+    }
+    const df = observed.length - 1;
+    const pValue = 1 - gammaPSeries(df / 2, chiSq / 2);
 
-    // Pooled SE for z-test
-    const pPooled = (controlConv + treatConv) / (controlN + treatN);
-    const se = Math.sqrt(pPooled * (1 - pPooled) * (1/controlN + 1/treatN));
-    const z = se === 0 ? 0 : absLift / se;
+    // Display badge
+    const badge = document.getElementById('srmBadge');
+    if (pValue >= 0.05) {
+        badge.innerHTML = '<div class="status-badge healthy">🟢 Traffic split looks healthy. No mismatch detected.</div>';
+    } else {
+        badge.innerHTML = '<div class="status-badge warning">🔴 Traffic split mismatch detected. Experiment may be invalid.</div>';
+    }
+
+    // Advanced stats
+    document.getElementById('srmAdvanced').innerHTML =
+        `<strong>Chi-square statistic:</strong> ${chiSq.toFixed(4)}<br>` +
+        `<strong>Degrees of freedom:</strong> ${df}<br>` +
+        `<strong>p-value:</strong> ${pValue < 0.0001 ? pValue.toExponential(4) : pValue.toFixed(6)}<br><br>` +
+        `If the p-value is below 0.05, there is a statistically significant mismatch between the expected and observed traffic split.`;
+
+    document.getElementById('srmResults').classList.remove('hidden');
+}
+
+/* ========================
+   LIFT CALCULATOR
+   ======================== */
+function calculateLift() {
+    const ctrlUsers = validateField('liftCtrlUsers');
+    const ctrlConv = validateField('liftCtrlConv');
+    const treatUsers = validateField('liftTreatUsers');
+    const treatConv = validateField('liftTreatConv');
+    const confidence = validateField('liftConfidence');
+    if ([ctrlUsers, ctrlConv, treatUsers, treatConv, confidence].includes(null)) return;
+    if (ctrlUsers <= 0 || treatUsers <= 0) return;
+
+    const pC = ctrlConv / ctrlUsers;
+    const pT = treatConv / treatUsers;
+    const absLift = pT - pC;
+    const relLift = pC > 0 ? absLift / pC : 0;
+
+    // Unpooled SE for CI
+    const se = Math.sqrt(pC * (1 - pC) / ctrlUsers + pT * (1 - pT) / treatUsers);
+    const z = se > 0 ? absLift / se : 0;
     const pValue = 2 * (1 - normalCDF(Math.abs(z)));
 
-    // 95% CI on absolute lift
-    const seUnpooled = Math.sqrt(pC*(1-pC)/controlN + pT*(1-pT)/treatN);
-    const ciLow = absLift - 1.96 * seUnpooled;
-    const ciHigh = absLift + 1.96 * seUnpooled;
+    const zCI = normalInv(1 - (1 - confidence / 100) / 2);
+    const ciLow = absLift - zCI * se;
+    const ciHigh = absLift + zCI * se;
 
-    document.getElementById('liftCR').textContent = `${(pC * 100).toFixed(3)}%`;
-    document.getElementById('liftTR').textContent = `${(pT * 100).toFixed(3)}%`;
-    document.getElementById('liftAbs').textContent = `${(absLift * 100).toFixed(3)}pp`;
-    document.getElementById('liftRel').textContent = `${(relLift * 100).toFixed(2)}%`;
-    document.getElementById('liftZ').textContent = z.toFixed(4);
-    document.getElementById('liftPval').textContent = pValue < 0.0001 ? pValue.toExponential(4) : pValue.toFixed(6);
-    document.getElementById('liftCI').textContent = `[${(ciLow * 100).toFixed(3)}pp, ${(ciHigh * 100).toFixed(3)}pp]`;
+    // Display result cards
+    document.getElementById('liftCtrlRate').textContent = (pC * 100).toFixed(2) + '%';
+    document.getElementById('liftTreatRate').textContent = (pT * 100).toFixed(2) + '%';
 
-    const verdictEl = document.getElementById('liftVerdict');
-    const verdictText = document.getElementById('liftVerdictText');
+    const absEl = document.getElementById('liftAbsLift');
+    absEl.textContent = (absLift >= 0 ? '+' : '') + (absLift * 100).toFixed(2) + 'pp';
+    absEl.style.color = absLift >= 0 ? 'var(--success)' : 'var(--danger)';
 
-    if (pValue < 0.05) {
-        verdictText.textContent = `✅ Statistically Significant (p < 0.05)`;
-        verdictText.style.color = 'var(--success)';
-        verdictEl.style.borderColor = 'var(--success)';
-        verdictEl.style.background = 'var(--success-bg)';
+    const relEl = document.getElementById('liftRelLift');
+    relEl.textContent = (relLift >= 0 ? '+' : '') + (relLift * 100).toFixed(2) + '%';
+    relEl.style.color = relLift >= 0 ? 'var(--success)' : 'var(--danger)';
+
+    // CI text
+    const confPct = confidence.toFixed(0);
+    document.getElementById('liftCIText').textContent =
+        `We are ${confPct}% confident that the true lift lies between:`;
+    document.getElementById('liftCIRange').textContent =
+        `${(ciLow * 100).toFixed(2)}%  and  ${(ciHigh * 100 >= 0 ? '+' : '')}${(ciHigh * 100).toFixed(2)}%`;
+
+    // CI bar visualization
+    const maxAbs = Math.max(Math.abs(ciLow * 100), Math.abs(ciHigh * 100), 0.5);
+    const scale = 45 / maxAbs;
+
+    const bar = document.getElementById('liftCIBar');
+    const point = document.getElementById('liftCIPoint');
+    const leftPct = 50 + ciLow * 100 * scale;
+    const rightPct = 50 + ciHigh * 100 * scale;
+    bar.style.left = leftPct + '%';
+    bar.style.width = Math.max(0, rightPct - leftPct) + '%';
+
+    let barColor;
+    if (ciLow > 0) barColor = 'var(--success)';
+    else if (ciHigh < 0) barColor = 'var(--danger)';
+    else barColor = 'var(--accent)';
+    bar.style.background = barColor;
+    point.style.background = barColor;
+    point.style.left = (50 + absLift * 100 * scale) + '%';
+
+    // Significance badge
+    const sigEl = document.getElementById('liftSignificance');
+    if (ciLow > 0) {
+        sigEl.innerHTML = '<div class="status-badge healthy">🟢 Statistically significant positive result.</div>';
+    } else if (ciHigh < 0) {
+        sigEl.innerHTML = '<div class="status-badge warning">🔴 Statistically significant negative impact.</div>';
     } else {
-        verdictText.textContent = `⬜ Not Significant (p ≥ 0.05)`;
-        verdictText.style.color = 'var(--warning)';
-        verdictEl.style.borderColor = 'var(--warning)';
-        verdictEl.style.background = 'var(--warning-bg)';
+        sigEl.innerHTML = '<div class="status-badge neutral">⚠️ Result is NOT statistically significant. The confidence interval crosses zero.</div>';
     }
+
+    // Advanced stats
+    document.getElementById('liftAdvanced').innerHTML =
+        `<strong>Standard Error:</strong> ${se.toFixed(6)}<br>` +
+        `<strong>Z-score:</strong> ${z.toFixed(4)}<br>` +
+        `<strong>p-value:</strong> ${pValue < 0.0001 ? pValue.toExponential(4) : pValue.toFixed(6)}<br>` +
+        `<strong>${confPct}% CI (Absolute):</strong> [${(ciLow * 100).toFixed(4)}%, ${(ciHigh * 100).toFixed(4)}%]`;
+
+    document.getElementById('liftResults').classList.remove('hidden');
 }
 
-// ========================
-// SQL COLLAPSIBLE BLOCKS
-// ========================
-function initSQLBlocks() {
-    // Open first block by default
-    const firstBlock = document.querySelector('.sql-block');
-    if (firstBlock) firstBlock.classList.add('open');
-}
+/* ========================
+   GLOSSARY (Understand the Terms)
+   ======================== */
+const termsData = {
+    Framework: [
+        { term: 'Primary Metric', desc: 'The direct measurement you expect the experiment to change, such as click-through rate or apply rate.', advanced: 'Also called the "success metric." Statistical tests are applied to this metric to determine if the treatment had a real effect.' },
+        { term: 'Outcome Metric', desc: 'The broader business goal you hope the experiment will improve — such as revenue, total applications, or engagement.', advanced: 'Outcome metrics help determine if primary metric improvements translate into real business value. They are monitored but not used to determine statistical significance.' },
+        { term: 'Control', desc: 'The group of users who see the existing (unchanged) experience. This is your baseline for comparison.', advanced: 'The control group provides a counterfactual — what would have happened without the change.' },
+        { term: 'Treatment', desc: 'The group of users who see the new (changed) experience being tested.', advanced: 'In a multi-variant test, you may have more than one treatment group (e.g., T1, T2), each testing a different change.' },
+        { term: 'Randomization', desc: 'Users are randomly assigned to groups so the comparison is fair and unbiased.', advanced: 'Ensures differences between groups are due to the treatment, not pre-existing user differences. Common methods include user-ID-based hashing.' },
+        { term: 'ITT (Intent to Treat)', desc: 'Analyzing all users based on their assigned group, even if they didn\'t fully interact with the experiment.', advanced: 'ITT analysis avoids selection bias. If a user was assigned to treatment but never saw the change, they\'re still counted in treatment.' },
+    ],
+    Sample: [
+        { term: 'Baseline', desc: 'The current conversion rate before you start the experiment.', advanced: 'Typically measured from historical data over a recent, representative time period (e.g., past 2–4 weeks).' },
+        { term: 'MDE (Minimum Detectable Effect)', desc: 'The smallest improvement you want to be able to detect.', advanced: 'Smaller MDE requires a larger sample size. Choose based on what\'s practically meaningful to the business.' },
+        { term: 'Confidence Level', desc: 'How sure you want to be that the result is real and not random noise. Usually 95%.', advanced: '95% confidence means a 5% chance (α = 0.05) of concluding there\'s an effect when there isn\'t (false positive / Type I error).' },
+        { term: 'Power', desc: 'The probability of detecting a real improvement if one truly exists. Usually 80%.', advanced: '80% power means a 20% chance of missing a real effect (β = 0.20, a false negative / Type II error). Higher power requires more users.' },
+        { term: 'Sample Size', desc: 'The total number of users needed in each group to produce reliable results.', advanced: 'Depends on baseline rate, MDE, confidence level, and power. Undersized experiments risk inconclusive results.' },
+    ],
+    SRM: [
+        { term: 'Expected Split', desc: 'The planned traffic allocation between groups (e.g., 50/50).', advanced: 'Configured in your experimentation platform. Determines what proportion of eligible users should land in each group.' },
+        { term: 'Observed Split', desc: 'The actual number of users that ended up in each group.', advanced: 'Small deviations are normal. The SRM test determines if the deviation is large enough to be concerning.' },
+        { term: 'Chi-square', desc: 'A statistical test comparing what we expected to see versus what actually happened.', advanced: 'Calculated as Σ((Observed − Expected)² / Expected). Larger values indicate greater discrepancy.' },
+        { term: 'p-value', desc: 'A number showing how likely the difference is due to random chance. Below 0.05 means something is probably wrong.', advanced: 'In SRM checks, p < 0.05 means the split is significantly different from planned, suggesting a bug.' },
+        { term: 'SRM (Sample Ratio Mismatch)', desc: 'When actual traffic split doesn\'t match the plan. If this happens, results may be invalid.', advanced: 'Common causes: redirect issues, bot filters affecting groups differently, platform bugs in randomization.' },
+    ],
+    Lift: [
+        { term: 'Absolute Lift', desc: 'The simple difference in rates between treatment and control (in percentage points).', advanced: 'Example: Control = 5%, Treatment = 6% → Absolute lift = 1pp. Shows raw magnitude of change.' },
+        { term: 'Relative Lift', desc: 'How much better (or worse) the treatment performed compared to control, as a percentage.', advanced: 'Example: Control = 5%, Treatment = 6% → Relative lift = 20%. Useful for comparing across different baselines.' },
+        { term: 'Confidence Interval', desc: 'A range of values that likely contains the true effect of the experiment.', advanced: 'A 95% CI means if we ran this experiment many times, 95% of calculated intervals would contain the true effect.' },
+        { term: 'Statistical Significance', desc: 'Whether the result is likely real, or could be due to random chance.', advanced: 'Significant when the p-value is below the threshold (typically 0.05) or when the confidence interval doesn\'t contain zero.' },
+        { term: 'Standard Error', desc: 'A measure of how much the estimated lift might vary due to random sampling.', advanced: 'SE decreases as sample size increases. Used to calculate CI: estimate ± Z × SE.' },
+    ]
+};
 
-function toggleSQL(header) {
-    header.parentElement.classList.toggle('open');
-}
+const termContainerMap = {
+    Framework: 'termsFramework',
+    Sample: 'termsSample',
+    SRM: 'termsSRM',
+    Lift: 'termsLift'
+};
 
-function copySQL(btn) {
-    const code = btn.parentElement.querySelector('code').textContent;
-    navigator.clipboard.writeText(code).then(() => {
-        const original = btn.textContent;
-        btn.textContent = 'Copied!';
-        btn.style.background = 'var(--success)';
-        setTimeout(() => {
-            btn.textContent = original;
-            btn.style.background = '';
-        }, 1500);
-    });
-}
-
-// ========================
-// CHECKLIST PROGRESS
-// ========================
-function initChecklistProgress() {
-    const checkboxes = document.querySelectorAll('#checklist input[type="checkbox"]');
-    const total = checkboxes.length;
-    checkboxes.forEach(cb => {
-        cb.addEventListener('change', () => {
-            const checked = document.querySelectorAll('#checklist input[type="checkbox"]:checked').length;
-            const pct = (checked / total) * 100;
-            document.getElementById('checklistProgress').style.width = pct + '%';
-            document.getElementById('checklistText').textContent = `${checked} / ${total} completed`;
+function buildTermsGlossary() {
+    for (const [group, items] of Object.entries(termsData)) {
+        const container = document.getElementById(termContainerMap[group]);
+        if (!container) continue;
+        items.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'accordion';
+            div.innerHTML = `
+                <button class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+                    ${item.term}
+                    <span class="accordion-chevron">▼</span>
+                </button>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        ${item.desc}
+                        ${item.advanced ? `
+                            <button class="advanced-toggle" onclick="toggleAdvanced(this)">
+                                <span class="adv-icon">+</span> Advanced Explanation
+                            </button>
+                            <div class="advanced-content">${item.advanced}</div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
         });
-    });
-}
-
-// ========================
-// EXPERIMENT REGISTRY
-// ========================
-const defaultExperiments = [
-    {
-        id: 'EXP-2026-042', hypothesis: 'Simplified apply flow increases applications',
-        owner: 'Priya S.', start: '2026-01-15', end: '2026-01-29',
-        status: 'Live', metric: 'Application Rate', result: '+9.8%', decision: 'Pending'
-    },
-    {
-        id: 'EXP-2026-039', hypothesis: 'Personalized job recs improve CTR',
-        owner: 'Arun K.', start: '2025-12-10', end: '2025-12-24',
-        status: 'Completed', metric: 'Job Card CTR', result: '+4.2%', decision: 'Ship'
-    },
-    {
-        id: 'EXP-2026-037', hypothesis: 'Recruiter dashboard redesign increases post rate',
-        owner: 'Meera J.', start: '2025-11-20', end: '2025-12-04',
-        status: 'Completed', metric: 'Jobs Posted / Recruiter', result: '-1.1%', decision: 'Kill'
-    },
-    {
-        id: 'EXP-2026-035', hypothesis: 'Push notifications boost return visits',
-        owner: 'Vikram D.', start: '2025-11-01', end: '2025-11-15',
-        status: 'Completed', metric: 'D7 Retention', result: '+2.5%', decision: 'Ship'
-    },
-    {
-        id: 'EXP-2026-044', hypothesis: 'AI-generated cover letters increase apply rate',
-        owner: 'Priya S.', start: '2026-02-01', end: '—',
-        status: 'Design', metric: 'Application Rate', result: '—', decision: '—'
-    },
-];
-
-function initRegistryData() {
-    const body = document.getElementById('registryBody');
-    body.innerHTML = '';
-    defaultExperiments.forEach(exp => addRegistryRowData(exp));
-}
-
-function addRegistryRowData(data) {
-    const body = document.getElementById('registryBody');
-    const row = document.createElement('tr');
-
-    const statusOptions = ['Design', 'QA', 'Live', 'Completed', 'Killed'];
-    const decisionOptions = ['—', 'Pending', 'Ship', 'Iterate', 'Kill'];
-
-    row.innerHTML = `
-        <td><input type="text" value="${data.id}" style="font-family:var(--font-mono);font-weight:600;width:120px"></td>
-        <td><input type="text" value="${data.hypothesis}" style="min-width:200px"></td>
-        <td><input type="text" value="${data.owner}" style="width:100px"></td>
-        <td><input type="date" value="${data.start}"></td>
-        <td><input type="${data.end === '—' ? 'text' : 'date'}" value="${data.end}" style="width:110px"></td>
-        <td><select>${statusOptions.map(s => `<option${s===data.status?' selected':''}>${s}</option>`).join('')}</select></td>
-        <td><input type="text" value="${data.metric}" style="min-width:130px"></td>
-        <td><input type="text" value="${data.result}" style="width:80px;font-family:var(--font-mono)"></td>
-        <td><select>${decisionOptions.map(d => `<option${d===data.decision?' selected':''}>${d}</option>`).join('')}</select></td>
-        <td><button class="btn-delete" onclick="this.closest('tr').remove()">✕</button></td>
-    `;
-    body.appendChild(row);
-}
-
-function addRegistryRow() {
-    const newExp = {
-        id: `EXP-2026-${String(Math.floor(Math.random()*900)+100).padStart(3,'0')}`,
-        hypothesis: '', owner: '', start: new Date().toISOString().slice(0,10),
-        end: '—', status: 'Design', metric: '', result: '—', decision: '—'
-    };
-    addRegistryRowData(newExp);
-    // Scroll to bottom of table
-    const wrapper = document.querySelector('#registry .table-wrapper');
-    wrapper.scrollTop = wrapper.scrollHeight;
-}
-
-// ========================
-// EXPORT CSV
-// ========================
-function exportCSV() {
-    const rows = document.querySelectorAll('#registryTable tbody tr');
-    const headers = ['Experiment ID','Hypothesis','Owner','Start','End','Status','Primary Metric','Result','Decision'];
-    let csv = headers.join(',') + '\n';
-
-    rows.forEach(row => {
-        const cells = [];
-        row.querySelectorAll('input, select').forEach(el => {
-            let val = el.value.replace(/"/g, '""');
-            cells.push(`"${val}"`);
-        });
-        // Remove last cell (delete button col)
-        csv += cells.join(',') + '\n';
-    });
-
-    downloadFile(csv, 'experiment_registry.csv', 'text/csv');
-}
-
-// ========================
-// EXPORT PDF (Client-side)
-// ========================
-function exportPDF() {
-    const rows = document.querySelectorAll('#registryTable tbody tr');
-    const data = [];
-    rows.forEach(row => {
-        const cells = [];
-        row.querySelectorAll('input, select').forEach(el => cells.push(el.value));
-        data.push(cells);
-    });
-
-    // Build a printable HTML
-    let html = `<!DOCTYPE html><html><head><title>Experiment Registry Report</title>
-    <style>
-        body{font-family:Arial,sans-serif;padding:40px;color:#1a1d2e}
-        h1{font-size:20px;margin-bottom:4px}
-        p{color:#666;margin-bottom:20px;font-size:12px}
-        table{width:100%;border-collapse:collapse;font-size:11px}
-        th{background:#1f2937;color:#fff;padding:8px 10px;text-align:left}
-        td{padding:7px 10px;border-bottom:1px solid #e0e3ed}
-        tr:nth-child(even){background:#f5f6fa}
-        .footer{margin-top:30px;font-size:10px;color:#999;text-align:center}
-    </style></head><body>
-    <h1>iimjobs Experiment Registry</h1>
-    <p>Generated: ${new Date().toLocaleString()} | Total experiments: ${data.length}</p>
-    <table><thead><tr>
-        <th>ID</th><th>Hypothesis</th><th>Owner</th><th>Start</th><th>End</th><th>Status</th><th>Metric</th><th>Result</th><th>Decision</th>
-    </tr></thead><tbody>`;
-
-    data.forEach(row => {
-        html += '<tr>' + row.map(c => `<td>${escapeHtml(c)}</td>`).join('') + '</tr>';
-    });
-
-    html += `</tbody></table>
-    <div class="footer">iimjobs Experiment Hub — Confidential</div>
-    </body></html>`;
-
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(html);
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => printWindow.print(), 300);
-}
-
-function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-}
-
-function downloadFile(content, filename, mimeType) {
-    const blob = new Blob([content], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
-// ========================
-// DASHBOARD CHARTS
-// ========================
-let chartInstances = {};
-
-function initDashboardCharts() {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const gridColor = isDark ? 'rgba(42,45,62,0.6)' : 'rgba(224,227,237,0.8)';
-    const textColor = isDark ? '#8b8fa8' : '#5c6080';
-    const controlColor = '#4f7cff';
-    const treatColor = '#a78bfa';
-
-    const days = ['Day 1','Day 2','Day 3','Day 4','Day 5','Day 6','Day 7','Day 8','Day 9'];
-
-    const defaultOpts = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: true,
-                position: 'top',
-                labels: { color: textColor, font: { size: 11, family: 'DM Sans' }, boxWidth: 12, padding: 12 }
-            }
-        },
-        scales: {
-            x: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } },
-            y: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } }
-        },
-        interaction: { intersect: false, mode: 'index' },
-        elements: { point: { radius: 3, hoverRadius: 5 }, line: { tension: 0.35, borderWidth: 2 } }
-    };
-
-    // Destroy existing charts
-    Object.values(chartInstances).forEach(c => c.destroy());
-    chartInstances = {};
-
-    // Conversion Rate
-    chartInstances.conv = new Chart(document.getElementById('chartConversion'), {
-        type: 'line',
-        data: {
-            labels: days,
-            datasets: [
-                { label: 'Control', data: [4.8,4.9,5.0,5.1,4.95,5.0,5.05,5.0,5.02], borderColor: controlColor, backgroundColor: controlColor + '20' },
-                { label: 'Treatment', data: [4.9,5.1,5.2,5.3,5.35,5.4,5.45,5.48,5.51], borderColor: treatColor, backgroundColor: treatColor + '20' }
-            ]
-        },
-        options: { ...defaultOpts, scales: { ...defaultOpts.scales, y: { ...defaultOpts.scales.y, ticks: { ...defaultOpts.scales.y.ticks, callback: v => v + '%' } } } }
-    });
-
-    // Revenue
-    chartInstances.rev = new Chart(document.getElementById('chartRevenue'), {
-        type: 'line',
-        data: {
-            labels: days,
-            datasets: [
-                { label: 'Control', data: [41.2,42.0,42.5,42.1,42.8,42.3,42.0,42.4,42.3], borderColor: controlColor, backgroundColor: controlColor + '20' },
-                { label: 'Treatment', data: [41.5,42.2,42.8,42.6,43.0,42.7,42.5,42.9,42.8], borderColor: treatColor, backgroundColor: treatColor + '20' }
-            ]
-        },
-        options: { ...defaultOpts, scales: { ...defaultOpts.scales, y: { ...defaultOpts.scales.y, ticks: { ...defaultOpts.scales.y.ticks, callback: v => '₹' + v } } } }
-    });
-
-    // Applications per user
-    chartInstances.apps = new Chart(document.getElementById('chartApplications'), {
-        type: 'bar',
-        data: {
-            labels: days,
-            datasets: [
-                { label: 'Control', data: [1.75,1.80,1.82,1.78,1.84,1.80,1.83,1.81,1.82], backgroundColor: controlColor + '80', borderRadius: 4, barPercentage: 0.4 },
-                { label: 'Treatment', data: [1.82,1.90,1.95,1.98,2.00,2.01,2.02,2.03,2.04], backgroundColor: treatColor + '80', borderRadius: 4, barPercentage: 0.4 }
-            ]
-        },
-        options: defaultOpts
-    });
-
-    // Error rate
-    chartInstances.err = new Chart(document.getElementById('chartErrors'), {
-        type: 'line',
-        data: {
-            labels: days,
-            datasets: [
-                { label: 'Control', data: [0.30,0.32,0.29,0.31,0.33,0.30,0.31,0.32,0.31], borderColor: controlColor, backgroundColor: controlColor + '20' },
-                { label: 'Treatment', data: [0.31,0.30,0.28,0.30,0.29,0.28,0.30,0.29,0.29], borderColor: treatColor, backgroundColor: treatColor + '20' }
-            ]
-        },
-        options: { ...defaultOpts, scales: { ...defaultOpts.scales, y: { ...defaultOpts.scales.y, ticks: { ...defaultOpts.scales.y.ticks, callback: v => v + '%' } } } }
-    });
+    }
 }
